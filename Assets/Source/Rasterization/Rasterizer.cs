@@ -38,11 +38,11 @@ public static class Rasterizer
                     maxWidth = Mathf.CeilToInt((maxX - gridData.Origin.x) / gridData.Step.x),
                     minHeight = Mathf.FloorToInt((minZ - gridData.Origin.y) / gridData.Step.y),
                     maxHeight = Mathf.CeilToInt((maxZ - gridData.Origin.y) / gridData.Step.y);
-                for (int w = minWidth; w <= maxWidth; ++w)
+                for (int w = minWidth; w < maxWidth; ++w)
                 {
-                    for (int h = minHeight; h <= maxHeight; ++h)
+                    for (int h = minHeight; h < maxHeight; ++h)
                     {
-                        Vector2 position = gridData.GetPosition2D(w, h);
+                        Vector2 position = gridData.GetCellData(w,h).Position;
                         if (IsPointInTriangle(position, vertices[v1], vertices[v2], vertices[v3]))
                         {
                             float depth = BarycentricCoordinates.GetDepth(position, vertices[v1], vertices[v2], vertices[v3]);

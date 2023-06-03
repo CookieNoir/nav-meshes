@@ -35,13 +35,8 @@ public class GridData
         }
     }
 
-    public Vector2 GetPosition2D(int width, int height)
+    public CellData GetCellData(int width, int height)
     {
-        return _cells[width, height].Position;
-    }
-
-    public Vector2 GetPosition3D(int width, int height)
-    {
-        return _cells[width, height].GetPosition3D();
+        return _cells[width, height];
     }
 }
