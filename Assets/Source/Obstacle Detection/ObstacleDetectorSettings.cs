@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
 
-[Serializable]
-public class ObstacleDetectorSettings
+[CreateAssetMenu(fileName = "Obstacle Detector Settings", menuName = "ScriptableObjects/Obstacle Detector Settings", order = 1)]
+public class ObstacleDetectorSettings: ScriptableObject
 {
     [field: SerializeField] public bool UseRange { get; private set; }
     [field: SerializeField] public Vector2 DepthRange { get; private set; }
