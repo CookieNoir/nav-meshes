@@ -43,7 +43,7 @@ public static class Rasterizer
                     for (int h = minHeight; h < maxHeight; ++h)
                     {
                         Vector2 position = gridData.GetCellData(w,h).Position;
-                        if (IsPointInTriangle(position, vertices[v1], vertices[v2], vertices[v3]))
+                        if (Vector3Utils.IsPointInTriangle(position, vertices[v1], vertices[v2], vertices[v3]))
                         {
                             float depth = BarycentricCoordinates.GetDepth(position, vertices[v1], vertices[v2], vertices[v3]);
                             gridData.TrySetData(w, h, depth, slope);
@@ -54,20 +54,5 @@ public static class Rasterizer
         }
 
         return gridData;
-    }
-
-    private static bool IsPointInTriangle(Vector2 point, Vector3 v1, Vector3 v2, Vector3 v3)
-    {
-        float s1 = Sign(point, v1, v2),
-              s2 = Sign(point, v2, v3),
-              s3 = Sign(point, v3, v1);
-        bool hasNegative = (s1 < 0) || (s2 < 0) || (s3 < 0),
-             hasPositive = (s1 > 0) || (s2 > 0) || (s3 > 0);
-        return !(hasNegative && hasPositive);
-    }
-
-    private static float Sign(Vector2 p1, Vector3 p2, Vector3 p3)
-    {
-        return (p1.x - p3.x) * (p2.z - p3.z) - (p2.x - p3.x) * (p1.y - p3.z);
     }
 }

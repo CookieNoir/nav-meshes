@@ -1,6 +1,6 @@
 public static class LayerRefiner
 {
-    public static void RefineLayer(ReducedLayer reducedLayer)
+    public static void RefineLayer(ObstacleLayer reducedLayer)
     {
         bool[,] isObstacleTemp = new bool[reducedLayer.Width, reducedLayer.Height];
         int reducedWidth = reducedLayer.Width - 1;
@@ -36,6 +36,17 @@ public static class LayerRefiner
                     if (neighborsCount >= 3) { reducedLayer.IsObstacle[x, y] = true; }
                 }
             }
+        }
+
+        for (int x = 0; x < reducedLayer.Width; ++x)
+        {
+            reducedLayer.IsObstacle[x, 0] = true;
+            reducedLayer.IsObstacle[x, reducedLayer.Height - 1] = true;
+        }
+        for (int y = 0; y < reducedLayer.Height; ++y)
+        {
+            reducedLayer.IsObstacle[0, y] = true;
+            reducedLayer.IsObstacle[reducedLayer.Width - 1, y] = true;
         }
     }
 }

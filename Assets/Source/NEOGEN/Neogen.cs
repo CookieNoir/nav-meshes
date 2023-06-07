@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Neogen : NavMeshGenerator
 {
     [SerializeField, Min(0.001f)] private float _rasterCellSize;
     [SerializeField] private ObstacleDetectorSettings _obstacleDetectorSettings;
+    [SerializeField, Min(0.001f)] private float _douglasPeuckerDistanceThreshold;
+    public UnityEvent<List<Polygon>> OnPolygonsReceived;
+    public UnityEvent<List<Polygon>> OnSimplifiedPolygonsReceived;
 
     public override CellAndPortalGraph Generate(GameObject[] gameObjects)
     {
@@ -15,12 +19,24 @@ public class Neogen : NavMeshGenerator
             GridData gridData = Rasterizer.Rasterize(gameObjects, _rasterCellSize);
             ObstacleLayer obstacleLayer = ObstacleDetector.DetectObstacles(gridData, _obstacleDetectorSettings);
 
-            ReducedLayersData reducedLayersData = ReducedLayersDataReceiver.GetReducedLayers(obstacleLayer);
+            List<ObstacleLayer> reducedLayers = ReducedLayersDataReceiver.GetReducedLayers(obstacleLayer);
 
-            cellAndPortalGraph = new CellAndPortalGraph(null);
+            List<NavMeshCell> cells = new List<NavMeshCell>();
+            foreach (var layer in reducedLayers)
+            {
+                LayerRefiner.RefineLayer(layer);
+                List<Polygon> polygons = ANavMGPolygonExtractor.GetPolygons(layer);
+                foreach (Polygon polygon in polygons)
+                {
+                    polygon.Simplify(_douglasPeuckerDistanceThreshold);
+                }
+                OnSimplifiedPolygonsReceived.Invoke(polygons);
+                cells.AddRange(ANavMG.GetNavMesh(polygons));
+            }
+            cellAndPortalGraph = new CellAndPortalGraph(cells);
         }
         DateTime endTime = DateTime.Now;
-        Debug.Log($"(Quadrilateral Grid Nav Mesh) Time for generation - {(endTime - startTime).TotalSeconds}");
+        Debug.Log($"(NEOGEN) Time for generation - {(endTime - startTime).TotalSeconds}");
         // Callback
         return cellAndPortalGraph;
     }

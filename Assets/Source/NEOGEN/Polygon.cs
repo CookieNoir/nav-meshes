@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ANavMGPolygon
+[System.Serializable]
+public class Polygon
 {
-    public Vector2Int[] Vertices { get; private set; }
+    [SerializeField] public Vector3[] Vertices { get; private set; }
 
-    public ANavMGPolygon(List<Vector2Int> vertices)
+    public Polygon(List<Vector3> vertices)
     {
         Vertices = vertices.ToArray();
     }
@@ -19,9 +20,9 @@ public class ANavMGPolygon
         float DistanceSquared(int start, int end, int current)
         {
             float a = Vertices[current].x - Vertices[start].x;
-            float b = Vertices[current].y - Vertices[start].y;
+            float b = Vertices[current].z - Vertices[start].z;
             float c = Vertices[end].x - Vertices[start].x;
-            float d = Vertices[end].y - Vertices[start].y;
+            float d = Vertices[end].z - Vertices[start].z;
 
             float u = -1f;
             float dot = a * c + b * d;
@@ -31,20 +32,20 @@ public class ANavMGPolygon
             if (u < 0f)
             {
                 projectedX = Vertices[start].x;
-                projectedY = Vertices[start].y;
+                projectedY = Vertices[start].z;
             }
             else if (u > 1f)
             {
                 projectedX = Vertices[end].x;
-                projectedY = Vertices[end].y;
+                projectedY = Vertices[end].z;
             }
             else
             {
                 projectedX = Vertices[start].x + u * c;
-                projectedY = Vertices[start].y + u * d;
+                projectedY = Vertices[start].z + u * d;
             }
             float dx = Vertices[current].x - projectedX;
-            float dy = Vertices[current].y - projectedY;
+            float dy = Vertices[current].z - projectedY;
             return dx * dx + dy * dy;
         }
 
@@ -82,7 +83,7 @@ public class ANavMGPolygon
         RdpPartial(0, midPoint);
         RdpPartial(midPoint, Vertices.Length);
 
-        Vector2Int[] newVertices = new Vector2Int[survivedCount];
+        Vector3[] newVertices = new Vector3[survivedCount];
         int index = 0;
         for (int i = 0; i < Vertices.Length; ++i)
         {

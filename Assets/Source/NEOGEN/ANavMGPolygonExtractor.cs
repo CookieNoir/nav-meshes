@@ -19,11 +19,11 @@ public static class ANavMGPolygonExtractor
         { new Vector2Int(-1, -1), new Vector2Int(-1, 0), new Vector2Int(-1, 1), },
     };
 
-    public static List<ANavMGPolygon> GetPolygons(ReducedLayer reducedLayer)
+    public static List<Polygon> GetPolygons(ObstacleLayer reducedLayer)
     {
-        List<ANavMGPolygon> polygons = new List<ANavMGPolygon>();
+        List<Polygon> polygons = new List<Polygon>();
         bool[,] isObstacle = reducedLayer.IsObstacle;
-
+        Vector3[,] positions = reducedLayer.Positions;
         bool[,] isVisited = new bool[reducedLayer.Width, reducedLayer.Height];
 
         for (int x = 0; x < reducedLayer.Width; ++x)
@@ -42,7 +42,7 @@ public static class ANavMGPolygonExtractor
                             if (!IsBlack(isObstacle, currentPosition + _directionsLeft[direction])) { break; }
                             direction++;
                         }
-                        if (direction < 4) { polygons.Add(GetPolygon(isObstacle, isVisited, currentPosition, direction)); }
+                        if (direction < 4) { polygons.Add(GetPolygon(isObstacle, positions, isVisited, currentPosition, direction)); }
                     }
                 }
             }
@@ -57,9 +57,9 @@ public static class ANavMGPolygonExtractor
         else { return isObstacle[position.x, position.y]; }
     }
 
-    private static ANavMGPolygon GetPolygon(bool[,] isObstacle, bool[,] isVisited, Vector2Int startPosition, int startDirection)
+    private static Polygon GetPolygon(bool[,] isObstacle, Vector3[,] positions, bool[,] isVisited, Vector2Int startPosition, int startDirection)
     {
-        List<Vector2Int> polygonVertices = new List<Vector2Int>();
+        List<Vector3> polygonVertices = new List<Vector3>();
         Vector2Int currentPosition;
         int rotations;
         int currentDirection = startDirection;
@@ -67,7 +67,7 @@ public static class ANavMGPolygonExtractor
         void Move(Vector2Int newPosition)
         {
             currentPosition = newPosition;
-            polygonVertices.Add(currentPosition);
+            polygonVertices.Add(positions[currentPosition.x, currentPosition.y]);
             isVisited[currentPosition.x, currentPosition.y] = true;
             rotations = 0;
         }
@@ -104,6 +104,6 @@ public static class ANavMGPolygonExtractor
                 rotations++;
             }
         }
-        return new ANavMGPolygon(polygonVertices);
+        return new Polygon(polygonVertices);
     }
 }

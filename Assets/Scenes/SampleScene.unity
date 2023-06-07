@@ -249,7 +249,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa7a3131f61dfbc4b968dc04786e9d80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _navMeshGenerator: {fileID: 1347642377}
+  _navMeshGenerator: {fileID: 674276116}
   _gameObjects:
   - {fileID: 730768108}
 --- !u!1 &674276114
@@ -280,7 +280,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 757592735}
+  - {fileID: 1069355415}
   m_Father: {fileID: 438450676}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -298,6 +300,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rasterCellSize: 0.2
   _obstacleDetectorSettings: {fileID: 11400000, guid: 12edcc5917bb34b43850c4fa7a03f148, type: 2}
+  _douglasPeuckerDistanceThreshold: 0.25
+  OnPolygonsReceived:
+    m_PersistentCalls:
+      m_Calls: []
+  OnSimplifiedPolygonsReceived:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 757592734}
+        m_TargetAssemblyTypeName: PolygonsDrawer, Assembly-CSharp
+        m_MethodName: SetPolygons
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -425,6 +446,57 @@ Transform:
   - {fileID: 969384462}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &757592733
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 757592735}
+  - component: {fileID: 757592734}
+  m_Layer: 0
+  m_Name: Polygons Drawer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &757592734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 757592733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7d1c1d52c7990243b9a3c5845347f89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _polygons: []
+  _palette:
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0, g: 1, b: 0.45867062, a: 1}
+  - {r: 1, g: 0.5504771, b: 0, a: 1}
+  - {r: 0, g: 0.6381006, b: 1, a: 1}
+  - {r: 0.7995424, g: 0, b: 1, a: 1}
+--- !u!4 &757592735
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 757592733}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 674276115}
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &963194225
 GameObject:
@@ -608,6 +680,54 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 969384461}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1069355414
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1069355415}
+  - component: {fileID: 1069355416}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1069355415
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1069355414}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 674276115}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1069355416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1069355414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0199a61df729b354b94d254e0b95fdb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _coneOrigin: {x: -1.67, y: 0, z: -4.9}
+  _coneLeft: {x: -11.47, y: 0, z: -4.9}
+  _coneRight: {x: -1.67, y: 0, z: -14.7}
+  _length: 10.22
 --- !u!1 &1108804607
 GameObject:
   m_ObjectHideFlags: 0
