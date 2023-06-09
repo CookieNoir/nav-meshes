@@ -50,6 +50,7 @@ public static class ANavMG
             Vector3 toDirection = to.Position - from.Position;
             float angle = Mathf.Atan2(toDirection.z, toDirection.x) - angleOffset;
             if (angle < 0f) { angle += 2f * Mathf.PI; }
+            Angle = angle;
             IsVisited = false;
         }
 
@@ -59,12 +60,11 @@ public static class ANavMG
         }
     }
 
-    public static List<NavMeshCell> GetNavMesh(List<Polygon> polygons)
+    public static List<NavMeshCell> GetNavMesh(List<ANavMGPolygon> polygons)
     {
-        Array.Reverse(polygons[0].Vertices);
         //for (int i = 1; i < polygons.Count; ++i)
         //{
-
+        //    Array.Reverse(polygons[i].Vertices);
         //}
 
         LinkedList<VertexNode> notches = new LinkedList<VertexNode>();
@@ -87,7 +87,7 @@ public static class ANavMG
                 vertexNodes[i].Previous = vertexNodes[previous];
                 vertexNodes[i].Next = vertexNodes[next];
                 float sign = Sign(vertices[previous], vertices[next], vertices[i]);
-                if (sign > 0f) { notches.AddLast(vertexNodes[i]); }
+                if (sign > 0f) { notches.AddLast(vertexNodes[i]); } 
             }
             startNodes.Add(vertexNodes[0]);
         }
@@ -156,6 +156,7 @@ public static class ANavMG
             }
         }
 
+        //Debug.Log($"Notches count: {notches.Count}");
         while (notches.Count > 0)
         {
             VertexNode notch = notches.First.Value;
@@ -168,7 +169,7 @@ public static class ANavMG
             Vector3 coneOrigin = notch.Position;
             Vector3 coneLeft = notch.Position + (notch.Position - notch.Previous.Position);
             Vector3 coneRight = notch.Position + (notch.Position - notch.Next.Position);
-            Debug.Log($"{coneOrigin} {coneLeft} {coneRight}, {notch.Previous.Position} {notch.Next.Position}");
+            //Debug.Log($"{coneOrigin} {coneLeft} {coneRight}, {notch.Previous.Position} {notch.Next.Position}");
 
             for (int p = 0; p < startNodes.Count; ++p)
             {
@@ -178,7 +179,7 @@ public static class ANavMG
                     if (workingNode != notch)
                     {
                         Vector3 difference = notch.Position - workingNode.Position;
-                        if (Vector3Utils.IsPointInCone(workingNode.Position, coneRight, coneOrigin, coneLeft))
+                        if (IsPointInCone(workingNode.Position, coneRight, coneOrigin, coneLeft))
                         {
                             float distance = difference.x * difference.x + difference.z * difference.z;
                             if (distance < minDistance)
@@ -198,10 +199,10 @@ public static class ANavMG
                                 float t = (difference.x * lineDifference.x + difference.z * lineDifference.z) / lengthSquared;
 
                                 bool isSpecial = false;
-                                if (t >= 1f || t <= 0f)
+                                if (t >= 0f && t <= 1f)
                                 {
                                     Vector3 projection = workingNode.Position + t * lineDifference;
-                                    if (Vector3Utils.IsPointInCone(projection, coneRight, coneOrigin, coneLeft))
+                                    if (IsPointInCone(projection, coneRight, coneOrigin, coneLeft))
                                     {
                                         Vector3 projectionDifference = projection - notch.Position;
                                         float distance = projectionDifference.x * projectionDifference.x + projectionDifference.z * projectionDifference.z;
@@ -265,7 +266,7 @@ public static class ANavMG
                 if (t >= 1f || t <= 0f)
                 {
                     Vector3 projection = portals[i].From.Position + t * lineDifference;
-                    if (Vector3Utils.IsPointInCone(projection, coneRight, coneOrigin, coneLeft))
+                    if (IsPointInCone(projection, coneRight, coneOrigin, coneLeft))
                     {
                         Vector3 projectionDifference = projection - notch.Position;
                         float distance = projectionDifference.x * projectionDifference.x + projectionDifference.z * projectionDifference.z;
@@ -289,7 +290,7 @@ public static class ANavMG
                     bool hasPointInCone = false;
                     minDistance = float.PositiveInfinity;
 
-                    if (Vector3Utils.IsPointInCone(nearestPortal.From.Position, coneRight, coneOrigin, coneLeft))
+                    if (IsPointInCone(nearestPortal.From.Position, coneRight, coneOrigin, coneLeft))
                     {
                         Vector3 difference = notch.Position - nearestPortal.From.Position;
                         minDistance = difference.x * difference.x + difference.z * difference.z;
@@ -297,7 +298,7 @@ public static class ANavMG
                         hasPointInCone = true;
                     }
 
-                    if (Vector3Utils.IsPointInCone(nearestPortal.To.Position, coneRight, coneOrigin, coneLeft))
+                    if (IsPointInCone(nearestPortal.To.Position, coneRight, coneOrigin, coneLeft))
                     {
                         Vector3 difference = notch.Position - nearestPortal.To.Position;
                         float distance = difference.x * difference.x + difference.z * difference.z;
@@ -350,6 +351,28 @@ public static class ANavMG
         return CreateCells(startNodes, portalsDictionary);
     }
 
+    private static void PrintDictionary(Dictionary<VertexNode, List<PortalVertexData>> portalsDictionary)
+    {
+        foreach (var kvp in portalsDictionary)
+        {
+            Debug.LogWarning($"{kvp.Key.Position}, visits = {kvp.Key.RemainedVisits}");
+            foreach (var item in kvp.Value)
+            {
+                Debug.Log($"Item {item.To.Position}, angle = {item.Angle}");
+            }
+        }
+        Debug.Log(" ");
+    }
+
+    private static bool IsPointInCone(Vector3 point, Vector3 v1, Vector3 v2, Vector3 v3)
+    {
+        float s1 = Sign(v1, v2, point),
+              s2 = Sign(v2, v3, point);
+        return s1 > 0 && s2 > 0;
+    }
+
+    // public static PolygonsDrawer PolygonsDrawer;
+
     private static List<NavMeshCell> CreateCells(List<VertexNode> startNodes, 
         Dictionary<VertexNode, List<PortalVertexData>> portalsDictionary)
     {
@@ -365,7 +388,6 @@ public static class ANavMG
             VertexNode fromNode = null;
             VertexNode workingNode = notVisitedNodes.Dequeue();
             if (workingNode.RemainedVisits < 0) { continue; }
-
             List<VertexNode> nodes = new List<VertexNode>();
             do
             {
@@ -378,7 +400,7 @@ public static class ANavMG
                 if (portalsDictionary.ContainsKey(workingNode))
                 {
                     List<PortalVertexData> datas = portalsDictionary[workingNode];
-                    if (workingNode.RemainedVisits == datas.Count)
+                    if (workingNode.RemainedVisits == datas.Count - 1)
                     {
                         datas.Sort();
                     }
@@ -450,7 +472,8 @@ public static class ANavMG
             {
                 positions[i] = nodes[i].Position;
             }
-            navMeshCells.Add(new NavMeshCell(positions));
+            // PolygonsDrawer.AddPolygon(positions);
+            navMeshCells.Add(new NavMeshCell(positions)); // EarClippingTriangulation.GetTriangles(positions));
         }
         return navMeshCells;
     }
@@ -557,6 +580,6 @@ public static class ANavMG
 
     public static float Sign(Vector3 v1, Vector3 v2, Vector3 v3)
     {
-        return (v2.x - v1.x) * (v3.z - v1.z) - (v3.x - v1.x) * (v2.z * v1.z);
+        return (v2.x - v1.x) * (v3.z - v1.z) - (v3.x - v1.x) * (v2.z - v1.z);
     }
 }

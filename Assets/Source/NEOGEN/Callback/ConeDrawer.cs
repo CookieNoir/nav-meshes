@@ -11,7 +11,7 @@ public class ConeDrawer : MonoBehaviour
     {
         Vector3 fromPos = 2 * _coneOrigin - _coneLeft;
         Vector3 toPos = 2 * _coneOrigin - _coneRight;
-        Debug.Log($"{fromPos} {toPos} {ANavMG.Sign(fromPos, toPos, _coneOrigin)}");
+        //Debug.Log($"{fromPos} {toPos} { ANavMG.Sign(fromPos, toPos, _coneOrigin)}");
     }
 
     private void OnDrawGizmos()

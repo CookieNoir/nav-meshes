@@ -5,39 +5,41 @@ using UnityEngine.Events;
 
 public class Neogen : NavMeshGenerator
 {
-    [SerializeField, Min(0.001f)] private float _rasterCellSize;
-    [SerializeField] private ObstacleDetectorSettings _obstacleDetectorSettings;
     [SerializeField, Min(0.001f)] private float _douglasPeuckerDistanceThreshold;
-    public UnityEvent<List<Polygon>> OnPolygonsReceived;
-    public UnityEvent<List<Polygon>> OnSimplifiedPolygonsReceived;
+    //[SerializeField] private PolygonsDrawer PolygonsDrawer;
+    public UnityEvent<List<ObstacleLayer>> OnReducedLayersReceived;
+    public UnityEvent<List<ANavMGPolygon>> OnPolygonsReceived;
 
     public override CellAndPortalGraph Generate(GameObject[] gameObjects)
     {
-        CellAndPortalGraph cellAndPortalGraph;
         DateTime startTime = DateTime.Now;
+
+        GridData gridData = Rasterizer.Rasterize(gameObjects, RasterCellSize);
+        ObstacleLayer obstacleLayer = ObstacleDetector.DetectObstacles(gridData, ObstacleDetectorSettings);
+
+        List<ObstacleLayer> reducedLayers = ReducedLayersDataReceiver.GetReducedLayers(obstacleLayer);
+
+        List<NavMeshCell> cells = new List<NavMeshCell>();
+        List<ANavMGPolygon> polygons = new List<ANavMGPolygon>();
+        foreach (var layer in reducedLayers)
         {
-            GridData gridData = Rasterizer.Rasterize(gameObjects, _rasterCellSize);
-            ObstacleLayer obstacleLayer = ObstacleDetector.DetectObstacles(gridData, _obstacleDetectorSettings);
-
-            List<ObstacleLayer> reducedLayers = ReducedLayersDataReceiver.GetReducedLayers(obstacleLayer);
-
-            List<NavMeshCell> cells = new List<NavMeshCell>();
-            foreach (var layer in reducedLayers)
+            LayerRefiner.RefineLayer(layer);
+            List<ANavMGPolygon> layerPolygons = ANavMGPolygonExtractor.GetPolygons(layer);
+            polygons.AddRange(layerPolygons);
+            foreach (ANavMGPolygon polygon in layerPolygons)
             {
-                LayerRefiner.RefineLayer(layer);
-                List<Polygon> polygons = ANavMGPolygonExtractor.GetPolygons(layer);
-                foreach (Polygon polygon in polygons)
-                {
-                    polygon.Simplify(_douglasPeuckerDistanceThreshold);
-                }
-                OnSimplifiedPolygonsReceived.Invoke(polygons);
-                cells.AddRange(ANavMG.GetNavMesh(polygons));
+                polygon.Simplify(_douglasPeuckerDistanceThreshold);
             }
-            cellAndPortalGraph = new CellAndPortalGraph(cells);
+            cells.AddRange(ANavMG.GetNavMesh(layerPolygons));
         }
+        CellAndPortalGraph cellAndPortalGraph = new CellAndPortalGraph(cells);
+
         DateTime endTime = DateTime.Now;
         Debug.Log($"(NEOGEN) Time for generation - {(endTime - startTime).TotalSeconds}");
-        // Callback
+
+        OnReducedLayersReceived.Invoke(reducedLayers);
+        OnPolygonsReceived.Invoke(polygons);
+
         return cellAndPortalGraph;
     }
 }

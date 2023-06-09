@@ -19,9 +19,9 @@ public static class ANavMGPolygonExtractor
         { new Vector2Int(-1, -1), new Vector2Int(-1, 0), new Vector2Int(-1, 1), },
     };
 
-    public static List<Polygon> GetPolygons(ObstacleLayer reducedLayer)
+    public static List<ANavMGPolygon> GetPolygons(ObstacleLayer reducedLayer)
     {
-        List<Polygon> polygons = new List<Polygon>();
+        List<ANavMGPolygon> polygons = new List<ANavMGPolygon>();
         bool[,] isObstacle = reducedLayer.IsObstacle;
         Vector3[,] positions = reducedLayer.Positions;
         bool[,] isVisited = new bool[reducedLayer.Width, reducedLayer.Height];
@@ -53,11 +53,11 @@ public static class ANavMGPolygonExtractor
     private static bool IsBlack(bool[,] isObstacle, Vector2Int position)
     {
         if (position.x < 0 || position.x >= isObstacle.GetLength(0) ||
-            position.y < 0 || position.y >= isObstacle.GetLength(1)) { return false; }
+            position.y < 0 || position.y >= isObstacle.GetLength(1)) { return true; }
         else { return isObstacle[position.x, position.y]; }
     }
 
-    private static Polygon GetPolygon(bool[,] isObstacle, Vector3[,] positions, bool[,] isVisited, Vector2Int startPosition, int startDirection)
+    private static ANavMGPolygon GetPolygon(bool[,] isObstacle, Vector3[,] positions, bool[,] isVisited, Vector2Int startPosition, int startDirection)
     {
         List<Vector3> polygonVertices = new List<Vector3>();
         Vector2Int currentPosition;
@@ -104,6 +104,6 @@ public static class ANavMGPolygonExtractor
                 rotations++;
             }
         }
-        return new Polygon(polygonVertices);
+        return new ANavMGPolygon(polygonVertices);
     }
 }

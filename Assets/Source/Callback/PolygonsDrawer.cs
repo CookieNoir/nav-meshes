@@ -1,15 +1,28 @@
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PolygonsDrawer : MonoBehaviour
 {
-    [SerializeField] private List<Polygon> _polygons;
+    [SerializeField] private List<NavMeshPolygon> _polygons;
     [SerializeField] private Color[] _palette;
 
-    public void SetPolygons(List<Polygon> polygons)
+    public void SetPolygons(List<RecastPolygon> polygons)
     {
-        _polygons = polygons;
+        _polygons = new List<NavMeshPolygon>();
+        _polygons.AddRange(polygons);
+    }
+
+    public void SetPolygons(List<ANavMGPolygon> polygons)
+    {
+        _polygons = new List<NavMeshPolygon>();
+        _polygons.AddRange(polygons);
+    }
+
+    public void AddPolygon(Vector3[] vertices)
+    {
+        if (_polygons == null) { _polygons = new List<NavMeshPolygon>(); }
+        _polygons.Add(new NavMeshPolygon(vertices.ToList()));
     }
 
     private void OnDrawGizmos()

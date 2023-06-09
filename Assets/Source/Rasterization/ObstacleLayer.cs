@@ -18,4 +18,18 @@ public class ObstacleLayer
         IsObstacle = isObstacle;
         Positions = positions;
     }
+
+    public void SetBounds()
+    {
+        for (int x = 0; x < Width; ++x)
+        {
+            IsObstacle[x, 0] = true;
+            IsObstacle[x, Height - 1] = true;
+        }
+        for (int y = 0; y < Height; ++y)
+        {
+            IsObstacle[0, y] = true;
+            IsObstacle[Width - 1, y] = true;
+        }
+    }
 }

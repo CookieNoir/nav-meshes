@@ -23,4 +23,18 @@ public class HexagonModel
         RelaxationData = new HexagonRelaxationData(MeshCreator);
         Neighbors = new HexagonModel[6];
     }
+
+    public void GizmosDrawModel()
+    {
+        Gizmos.color = Color.black;
+        Vector3[] vertices = MeshCreator.Vertices;
+        int[] quads = MeshCreator.Quads;
+        for (int i = 0; i < quads.Length; i += 4)
+        {
+            Gizmos.DrawLine(Position + vertices[quads[i]], Position + vertices[quads[i + 1]]);
+            Gizmos.DrawLine(Position + vertices[quads[i + 1]], Position + vertices[quads[i + 2]]);
+            Gizmos.DrawLine(Position + vertices[quads[i + 2]], Position + vertices[quads[i + 3]]);
+            Gizmos.DrawLine(Position + vertices[quads[i + 3]], Position + vertices[quads[i]]);
+        }
+    }
 }

@@ -3,24 +3,24 @@ using UnityEngine;
 
 public class CellAndPortalGraph
 {
-    private List<NavMeshCell> _cells;
+    public List<NavMeshCell> Cells { get; private set; }
 
     public CellAndPortalGraph(List<NavMeshCell> cells)
     {
-        _cells = cells;
+        Cells = cells;
     }
 
     public bool TryGetCell(Vector2 position, out NavMeshCell navMeshCell)
     {
         navMeshCell = null;
-        if (_cells == null) { return false; }
+        if (Cells == null) { return false; }
         
         return true;
     }
 
     public NavMeshCell GetNearestCell(Vector2 position)
     {
-        if (_cells == null) { return null; }
+        if (Cells == null) { return null; }
         
         return null;
     }

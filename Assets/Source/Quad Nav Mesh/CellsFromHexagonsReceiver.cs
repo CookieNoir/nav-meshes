@@ -70,10 +70,10 @@ public static class CellsFromHexagonsReceiver
                     }
                 }
             }
-            ConnectHexagonCells(hexagonCells, quads);
+            //ConnectHexagonCells(hexagonCells, quads);
             borderCellDatas.Add(new BorderCellData(hexagonModel, borderCells));
         }
-        ConnectBorderCells(borderCellDatas);
+        //ConnectBorderCells(borderCellDatas);
         return cells;
     }
 
