@@ -6,12 +6,13 @@ using UnityEngine.Events;
 public class Neogen : NavMeshGenerator
 {
     [SerializeField, Min(0.001f)] private float _douglasPeuckerDistanceThreshold;
-    //[SerializeField] private PolygonsDrawer PolygonsDrawer;
+    //[SerializeField] private PolygonsDrawer _polygonsDrawer;
     public UnityEvent<List<ObstacleLayer>> OnReducedLayersReceived;
     public UnityEvent<List<ANavMGPolygon>> OnPolygonsReceived;
 
     public override CellAndPortalGraph Generate(GameObject[] gameObjects)
     {
+        //ANavMG.PolygonsDrawer = _polygonsDrawer;  
         DateTime startTime = DateTime.Now;
 
         GridData gridData = Rasterizer.Rasterize(gameObjects, RasterCellSize);

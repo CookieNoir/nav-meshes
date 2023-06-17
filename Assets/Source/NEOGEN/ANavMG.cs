@@ -263,7 +263,7 @@ public static class ANavMG
 
                 float t = (notchDifference.x * lineDifference.x + notchDifference.z * lineDifference.z) / lengthSquared;
 
-                if (t >= 1f || t <= 0f)
+                if (t >= 0f && t <= 1f)
                 {
                     Vector3 projection = portals[i].From.Position + t * lineDifference;
                     if (IsPointInCone(projection, coneRight, coneOrigin, coneLeft))
@@ -371,7 +371,7 @@ public static class ANavMG
         return s1 > 0 && s2 > 0;
     }
 
-    // public static PolygonsDrawer PolygonsDrawer;
+    //public static PolygonsDrawer PolygonsDrawer;
 
     private static List<NavMeshCell> CreateCells(List<VertexNode> startNodes, 
         Dictionary<VertexNode, List<PortalVertexData>> portalsDictionary)
@@ -472,7 +472,7 @@ public static class ANavMG
             {
                 positions[i] = nodes[i].Position;
             }
-            // PolygonsDrawer.AddPolygon(positions);
+            //PolygonsDrawer.AddPolygon(positions);
             navMeshCells.Add(new NavMeshCell(positions)); // EarClippingTriangulation.GetTriangles(positions));
         }
         return navMeshCells;

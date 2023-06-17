@@ -9,19 +9,4 @@ public class CellAndPortalGraph
     {
         Cells = cells;
     }
-
-    public bool TryGetCell(Vector2 position, out NavMeshCell navMeshCell)
-    {
-        navMeshCell = null;
-        if (Cells == null) { return false; }
-        
-        return true;
-    }
-
-    public NavMeshCell GetNearestCell(Vector2 position)
-    {
-        if (Cells == null) { return null; }
-        
-        return null;
-    }
 }

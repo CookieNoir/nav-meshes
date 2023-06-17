@@ -27,8 +27,9 @@ public class CellAndPortalGraphDrawer : MonoBehaviour
             vertexIndexOffset = vertices.Count;
         }
         Mesh mesh = new Mesh();
-        mesh.SetVertices(vertices);
-        mesh.SetTriangles(triangles.ToArray(), 0);
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
         _meshFilter.mesh = mesh;
     }
 }

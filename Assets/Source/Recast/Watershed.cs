@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public static class Watershed
 {
@@ -233,7 +234,9 @@ public static class Watershed
             return result;
         }
 
-        void Visit(int x, int y)
+        Stack<Vector2Int> stack = new Stack<Vector2Int>();
+
+        bool Visit(int x, int y)
         {
             if (watershedPartition[x, y] == _wshed)
             {
@@ -241,24 +244,35 @@ public static class Watershed
                 if (neighbor > 0)
                 {
                     watershedPartition[x, y] = neighbor;
+                    bool result = false;
                     for (int n = 0; n < 4; ++n)
                     {
                         int w = x + _neighborOffsetX[n];
                         int h = y + _neighborOffsetY[n];
                         if (IsValid(w, h))
                         {
-                            Visit(w, h);
+                            stack.Push(new Vector2Int(w, h));
+                            result = true;
                         }
                     }
+                    return result;
                 }
+                else return false;
             }
+            else return false;
         }
 
         for (int x = 0; x < width; ++x)
         {
             for (int y = 0; y < height; ++y)
             {
-                Visit(x, y);
+                if (Visit(x, y))
+                {
+                    while (stack.TryPop(out Vector2Int item))
+                    {
+                        Visit(item.x, item.y);
+                    }
+                }
             }
         }
     }

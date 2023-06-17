@@ -27,8 +27,6 @@ public static class RecastPolygonExtractor
 
     public static List<RecastPolygon> GetPolygons(ObstacleLayer obstacleLayer, int[,] watershedPartition, out bool[,] isObstacle)
     {
-        //Watershed.Expand(watershedPartition);
-
         isObstacle = new bool[obstacleLayer.Width, obstacleLayer.Height];
         int maxValue = 0;
         for (int x = 0; x < obstacleLayer.Width; ++x)

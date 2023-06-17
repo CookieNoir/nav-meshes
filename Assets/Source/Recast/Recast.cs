@@ -20,7 +20,7 @@ public class Recast : NavMeshGenerator
         LayerRefiner.RefineLayer(obstacleLayer);
         int[,] distanceTransform = DistanceTransform.GetDistancesManhattan(obstacleLayer);
         int[,] watershedPartition = Watershed.GetPartition(distanceTransform);
-
+        Watershed.Expand(watershedPartition);
         bool[,] isObstacle;
         List<RecastPolygon> polygons = RecastPolygonExtractor.GetPolygons(obstacleLayer, watershedPartition, out isObstacle);
         List<NavMeshCell> cells = new List<NavMeshCell>();

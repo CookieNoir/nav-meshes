@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class FloodFill
@@ -24,14 +25,23 @@ public static class FloodFill
     {
         properties.LayerMasks[point.x, point.y] = properties.TargetColor;
         properties.ReducedLayerBounds.UpdateBounds(point.x, point.y);
-        for (int i = 0; i < 4; ++i)
+
+        Stack<Vector2Int> stack = new Stack<Vector2Int>();
+        stack.Push(point);
+
+        while (stack.TryPop(out Vector2Int item))
         {
-            Vector2Int nextPoint = point + _delta[i];
-            if (nextPoint.x >= 0 && nextPoint.x < properties.LayerMasks.GetLength(0) &&
-                nextPoint.y >= 0 && nextPoint.y < properties.LayerMasks.GetLength(1) &&
-                properties.LayerMasks[nextPoint.x, nextPoint.y] == -1)
+            properties.LayerMasks[item.x, item.y] = properties.TargetColor;
+            properties.ReducedLayerBounds.UpdateBounds(item.x, item.y);
+            for (int i = 0; i < 4; ++i)
             {
-                FloodFillDFS(properties, nextPoint);
+                Vector2Int nextPoint = item + _delta[i];
+                if (nextPoint.x >= 0 && nextPoint.x < properties.LayerMasks.GetLength(0) &&
+                    nextPoint.y >= 0 && nextPoint.y < properties.LayerMasks.GetLength(1) &&
+                    properties.LayerMasks[nextPoint.x, nextPoint.y] == -1)
+                {
+                    stack.Push(nextPoint);
+                }
             }
         }
     }
